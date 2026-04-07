@@ -53,6 +53,48 @@ Sylph recherche des offres, filtre les arnaques et les ecoles deguisees, et post
 ![Ollama](https://img.shields.io/badge/Ollama-LLM-000000?style=for-the-badge&logo=ollama&logoColor=white)
 ![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)
 
+### Dependances systeme
+
+<details>
+<summary><b>Ubuntu / Debian</b></summary>
+
+```bash
+# Python 3.11+
+sudo apt update
+sudo apt install python3 python3-pip python3-venv
+
+# Google Chrome
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+sudo apt update
+sudo apt install google-chrome-stable
+
+# Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull qwen2.5:3b
+```
+
+</details>
+
+<details>
+<summary><b>Arch Linux</b></summary>
+
+```bash
+# Python 3.11+
+sudo pacman -S python python-pip python-virtualenv
+
+# Google Chrome (AUR)
+yay -S google-chrome
+
+# Ollama
+sudo pacman -S ollama
+ollama pull qwen2.5:3b
+```
+
+</details>
+
+> **Note** : ChromeDriver est gere automatiquement par Selenium 4.20+. Un bot Telegram est necessaire — creez-en un via [@BotFather](https://t.me/BotFather).
+
 ---
 
 ## Installation
@@ -72,9 +114,6 @@ cp config.yaml.example config.yaml
 
 # Creer le dossier de logs
 mkdir -p logs
-
-# Installer Ollama et telecharger le modele
-ollama pull qwen2.5:3b
 ```
 
 ## Configuration
