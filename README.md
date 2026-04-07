@@ -205,6 +205,12 @@ sylph/
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details. 
 
----
+---  
+ 
+## ⚠️ **Disclaimer**  
+ 
+Le bot est encore en phase test donc voila.  
+ 
+---  
 
 $\color{#a3a3a3}{Copyright (c) 2026 Stiimy}$
