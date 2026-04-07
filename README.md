@@ -209,7 +209,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
  
 ## ⚠️ **Disclaimer**  
  
-Le bot est encore en phase test donc voila.  
+Le bot est encore en phase de test donc voila.  
  
 ---  
 
