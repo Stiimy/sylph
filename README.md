@@ -11,6 +11,10 @@ Agent automatise de recherche d'alternance en informatique sur **6 plateformes f
 
 Sylph recherche des offres, filtre les arnaques et les ecoles deguisees, et postule automatiquement sur les plateformes supportees. Les offres non-automatisables sont envoyees sur Telegram pour candidature manuelle.
 
+<p align="center">
+  <img src="https://private-user-images.githubusercontent.com/114451424/574584210-afe821c2-868c-4d82-a86d-b46cd09b67cd.jpg?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NzU1NTQ4NTMsIm5iZiI6MTc3NTU1NDU1MywicGF0aCI6Ii8xMTQ0NTE0MjQvNTc0NTg0MjEwLWFmZTgyMWMyLTg2OGMtNGQ4Mi1hODZkLWI0NmNkMDliNjdjZC5qcGc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwNDA3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDQwN1QwOTM1NTNaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hZGI1N2NhY2M5NGUzZjIzMjkzYjE3MzgyNDQwZDZiZDRkOWM4YTZiNjNhNWI1YzIxNDBiYTE4NWI3ZTZjZGY2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.o6FOleumRqmyuq1MrMyFESQLU-gOPk06PMg8ICTLeD8" alt="Sylph pfp" />
+</p>
+
 ---
 
 ## Plateformes supportees
