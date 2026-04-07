@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Logs{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Logs en temps reel</h2>
+    <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-secondary" onclick="clearLogs()">
+            <i class="bi bi-trash me-1"></i> Effacer l'ecran
+        </button>
+        <button class="btn btn-sm btn-outline-primary" onclick="toggleAutoScroll()" id="btn-autoscroll">
+            <i class="bi bi-arrow-down-circle me-1"></i> Auto-scroll: ON
+        </button>
+        <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary filter-btn active" data-level="all" onclick="setLogFilter('all', this)">Tous</button>
+            <button class="btn btn-outline-danger filter-btn" data-level="error" onclick="setLogFilter('error', this)">Erreurs</button>
+            <button class="btn btn-outline-warning filter-btn" data-level="warning" onclick="setLogFilter('warning', this)">Warnings</button>
+            <button class="btn btn-outline-info filter-btn" data-level="info" onclick="setLogFilter('info', this)">Info</button>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0">
+    <div class="card-body p-0">
+        <div id="log-container" class="log-container">
+            <div class="text-muted text-center py-3">Connexion au flux de logs...</div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-2 d-flex justify-content-between align-items-center">
+    <small class="text-muted" id="log-status">
+        <i class="bi bi-circle-fill text-secondary"></i> Deconnecte
+    </small>
+    <small class="text-muted" id="log-count">0 lignes</small>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let autoScroll = true;
+    let logFilter = 'all';
+    let lineCount = 0;
+    let eventSource = null;
+    
+    function connectSSE() {
+        const container = document.getElementById('log-container');
+        const statusEl = document.getElementById('log-status');
+        
+        eventSource = new EventSource('/logs/stream');
+        
+        eventSource.onopen = function() {
+            statusEl.innerHTML = '<i class="bi bi-circle-fill text-success"></i> Connecte';
+        };
+        
+        eventSource.onmessage = function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'heartbeat') return;
+                
+                if (data.type === 'separator') {
+                    const div = document.createElement('div');
+                    div.className = 'log-separator';
+                    div.textContent = data.message;
+                    container.appendChild(div);
+                    return;
+                }
+                
+                const div = document.createElement('div');
+                div.className = 'log-line log-' + data.type;
+                div.dataset.level = data.type;
+                div.textContent = data.message;
+                
+                // Appliquer le filtre
+                if (logFilter !== 'all' && data.type !== logFilter) {
+                    div.style.display = 'none';
+                }
+                
+                container.appendChild(div);
+                lineCount++;
+                document.getElementById('log-count').textContent = lineCount + ' lignes';
+                
+                // Limiter a 1000 lignes
+                while (container.children.length > 1000) {
+                    container.removeChild(container.firstChild);
+                }
+                
+                if (autoScroll) {
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch (e) {
+                // Ignore parse errors
+            }
+        };
+        
+        eventSource.onerror = function() {
+            statusEl.innerHTML = '<i class="bi bi-circle-fill text-danger"></i> Deconnecte';
+            // Reconnexion auto apres 5s
+            setTimeout(connectSSE, 5000);
+        };
+    }
+    
+    function clearLogs() {
+        const container = document.getElementById('log-container');
+        container.innerHTML = '';
+        lineCount = 0;
+        document.getElementById('log-count').textContent = '0 lignes';
+    }
+    
+    function toggleAutoScroll() {
+        autoScroll = !autoScroll;
+        const btn = document.getElementById('btn-autoscroll');
+        btn.innerHTML = '<i class="bi bi-arrow-down-circle me-1"></i> Auto-scroll: ' + (autoScroll ? 'ON' : 'OFF');
+        if (autoScroll) {
+            document.getElementById('log-container').scrollTop = document.getElementById('log-container').scrollHeight;
+        }
+    }
+    
+    function setLogFilter(level, btn) {
+        logFilter = level;
+        
+        // Update boutons
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Filtrer les lignes existantes
+        document.querySelectorAll('.log-line').forEach(line => {
+            if (level === 'all' || line.dataset.level === level) {
+                line.style.display = '';
+            } else {
+                line.style.display = 'none';
+            }
+        });
+    }
+    
+    // Demarrer la connexion SSE
+    connectSSE();
+</script>
+{% endblock %}

@@ -1,0 +1,207 @@
+# Configuration de Sylph - Agent de recherche d'alternance
+# Copiez ce fichier en config.yaml et remplissez vos informations
+
+search:
+  keywords:
+    - "alternance informatique"
+    - "alternance cybersecurite"
+    - "alternance systeme reseau"
+    - "alternance support informatique"
+    - "alternance administrateur systeme"
+  locations:
+    - "Paris"
+  contract_types:
+    - "alternance"
+    - "apprentissage"
+
+profile:
+  name: "NOM Prenom"
+  email: "votre@email.com"
+  phone: "+33 6 XX XX XX XX"
+  cv_path: "/chemin/vers/cv.pdf"
+  summary: |
+    Votre resume de profil ici.
+    Competences, formation, objectifs.
+
+scam_detection:
+  # Sites autorises (whitelist) - SEULS ces sites recevront vos infos
+  whitelisted_domains:
+    - "fr.indeed.com"
+    - "indeed.com"
+    - "www.welcometothejungle.com"
+    - "welcometothejungle.com"
+    - "www.hellowork.com"
+    - "hellowork.com"
+    - "www.apec.fr"
+    - "apec.fr"
+    - "www.linkedin.com"
+    - "linkedin.com"
+    - "www.pole-emploi.fr"
+    - "pole-emploi.fr"
+    - "candidat.francetravail.fr"
+    - "francetravail.fr"
+    - "www.francetravail.fr"
+    - "contactrh.com"
+    - "successfactors.com"
+    - "sapsf.com"
+    - "jobs.smartrecruiters.com"
+    - "smartrecruiters.com"
+
+  # Mots-cles suspects dans les offres
+  suspicious_keywords:
+    - "sans entretien"
+    - "remuneration exceptionnelle"
+    - "travail facile"
+    - "gagnez beaucoup"
+    - "investissement prealable"
+    - "frais de dossier"
+    - "achat de materiel"
+    - "commission uniquement"
+    - "gains faciles"
+    - "crypto"
+    - "forex"
+    - "trading"
+    - "mlm"
+    - "marketing de reseau"
+    - "envoyez votre rib"
+    - "carte d'identite"
+    - "numero de securite sociale"
+    - "paiement avance"
+
+  # Red flags dans les formulaires (ne JAMAIS remplir ces champs)
+  redflag_fields:
+    - "rib"
+    - "iban"
+    - "carte bancaire"
+    - "numero securite sociale"
+    - "carte identite"
+    - "passeport"
+    - "mot de passe"
+
+  # Salaire min/max realiste pour une alternance
+  min_salary: 500
+  max_salary: 2000
+
+  # Domaines email recruteur bloques (email gratuit = suspect)
+  blocked_email_domains:
+    - "gmail.com"
+    - "yahoo.com"
+    - "yahoo.fr"
+    - "hotmail.com"
+    - "hotmail.fr"
+    - "outlook.com"
+    - "protonmail.com"
+    - "yopmail.com"
+    - "temp-mail.org"
+
+  # Age minimum du domaine (en jours) pour etre considere fiable
+  min_domain_age_days: 180
+
+  # Entreprises blacklistees - NE JAMAIS postuler chez elles
+  # (ecoles/centres de formation qui spamment les offres d'alternance)
+  blacklisted_companies:
+    - "aurlom"
+    - "iscod"
+    - "schola nova"
+    - "nexa digital school"
+    - "institut f2i"
+    - "2i academy"
+    - "dsti school"
+    - "arinfo"
+    - "doranco"
+    - "estiam"
+    - "webitech"
+    - "ynov"
+    - "openclassrooms"
+    - "wild code school"
+    - "simplon"
+    - "iron hack"
+    - "ironhack"
+    - "le wagon"
+    - "jedha"
+    - "holberton"
+    - "ada tech school"
+    - "3wa"
+    - "webforce3"
+    - "itschool"
+    - "my digital school"
+    - "mydigitalschool"
+    - "efrei"
+    - "supinfo"
+    - "epitech"
+    - "coding factory"
+    - "ppa business school"
+    - "digital campus"
+    - "escen"
+
+automation:
+  delay_between_applications: 3600  # Secondes entre chaque cycle de recherche
+  active_hours:
+    start: "06:00"
+    end: "23:59"
+  max_applications_per_day: 30
+  max_retries: 3
+
+platforms:
+  francetravail:
+    enabled: true
+    email: ""
+    password: ""
+  indeed:
+    enabled: true
+    # Indeed utilise un code OTP par email — pas d'auto-login possible
+    # Apply necessite une cle 2captcha (voir section captcha)
+  hellowork:
+    enabled: true
+    email: "votre@email.com"
+    password: "votre_mot_de_passe"
+  welcome_to_the_jungle:
+    enabled: true
+  linkedin:
+    enabled: true
+    apply_enabled: false  # Apply desactive par defaut (anti-bot LinkedIn)
+    easy_apply_only: true
+  apec:
+    enabled: true
+
+# Telegram - Notifications de candidature
+# Creez un bot via @BotFather sur Telegram, recuperez le token
+# Puis envoyez un message au bot et recuperez votre chat_id via
+# https://api.telegram.org/bot<TOKEN>/getUpdates
+telegram:
+  bot_token: ""   # Token du bot Telegram
+  chat_id: ""     # Votre chat_id
+
+# Candidature automatique
+apply:
+  enabled: true
+  delay_between_applies: 30  # Secondes entre chaque candidature
+  max_per_session: 30
+
+# Resolution CAPTCHA via 2captcha (~2-3 EUR / 1000 resolutions)
+# Sans cle API, Indeed reste en mode recherche uniquement
+captcha:
+  2captcha_api_key: ""  # Cle API 2captcha (optionnel)
+
+# SMTP — Envoi automatique de candidatures par email
+smtp:
+  host: "smtp-mail.outlook.com"
+  port: 587
+  password: ""   # Laisser vide = SMTP desactive
+
+# IA via Ollama - Analyse des offres + lettres de motivation
+ai:
+  enabled: true
+  base_url: "http://localhost:11434"
+  model: "qwen2.5:3b"
+  timeout: 120
+  temperature: 0.3
+  school_detection_threshold: 0.7
+
+# Profil Chromium persistant — garde les sessions (cookies, login)
+browser:
+  profile_dir: "~/.sylph-profile"
+
+logging:
+  level: "INFO"
+  file: "logs/agent.log"

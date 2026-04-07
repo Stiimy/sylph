@@ -1,0 +1,14 @@
+[Unit]
+Description=Sylph Web Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USER
+WorkingDirectory=/path/to/sylph
+ExecStart=/usr/bin/python3 /path/to/sylph/web/app.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

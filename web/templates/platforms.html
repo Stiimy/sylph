@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Plateformes{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Plateformes</h2>
+
+<div class="row g-4">
+    {% for p in platforms %}
+    <div class="col-md-6">
+        <div class="card border-0 platform-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="platform-icon-lg" style="background: {{ p.color }}20; color: {{ p.color }}">
+                            <i class="bi {{ p.icon }} fs-3"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">{{ p.name }}</h5>
+                            <small class="text-muted">{{ p.cookie_count }} cookies</small>
+                        </div>
+                    </div>
+                    <div>
+                        {% if p.status == 'connected' %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Connecte</span>
+                        {% elif p.status == 'expired' %}
+                            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle me-1"></i>Expire</span>
+                        {% else %}
+                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Deconnecte</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if p.note %}
+                <div class="alert alert-info small mb-3 py-2">
+                    <i class="bi bi-info-circle me-1"></i> {{ p.note }}
+                </div>
+                {% endif %}
+                
+                <div class="d-flex gap-2">
+                    {% if p.key != 'linkedin' %}
+                    <button class="btn btn-primary btn-sm" onclick="startLogin('{{ p.key }}')" id="btn-login-{{ p.key }}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Se connecter
+                    </button>
+                    {% endif %}
+                    <a href="{{ p.url }}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Ouvrir le site
+                    </a>
+                </div>
+                
+                <!-- Status de login en cours -->
+                <div id="login-status-{{ p.key }}" class="mt-2" style="display: none;">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="spinner-border spinner-border-sm" role="status" id="login-spinner-{{ p.key }}"></div>
+                        <span class="small" id="login-message-{{ p.key }}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Import cookies -->
+<div class="card border-0 mt-4">
+    <div class="card-body">
+        <h5 class="card-title">Importer des cookies</h5>
+        <p class="text-muted small">
+            Importez un fichier cookies.txt au format Netscape (exporte depuis votre navigateur avec une extension comme "Get cookies.txt").
+        </p>
+        <form id="cookieImportForm" enctype="multipart/form-data">
+            <div class="input-group">
+                <input type="file" name="cookies_file" class="form-control" accept=".txt" required>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload me-1"></i> Importer
+                </button>
+            </div>
+        </form>
+        <div id="import-result" class="mt-2" style="display: none;"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function startLogin(platform) {
+        const btn = document.getElementById('btn-login-' + platform);
+        const statusDiv = document.getElementById('login-status-' + platform);
+        const spinner = document.getElementById('login-spinner-' + platform);
+        const message = document.getElementById('login-message-' + platform);
+        
+        btn.disabled = true;
+        statusDiv.style.display = 'block';
+        message.textContent = 'Demarrage...';
+        
+        fetch('/platforms/login/' + platform, { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    message.textContent = data.error;
+                    spinner.style.display = 'none';
+                    btn.disabled = false;
+                    return;
+                }
+                message.textContent = data.message;
+                // Polling du statut
+                pollLoginStatus(platform);
+            })
+            .catch(err => {
+                message.textContent = 'Erreur: ' + err;
+                spinner.style.display = 'none';
+                btn.disabled = false;
+            });
+    }
+    
+    function pollLoginStatus(platform) {
+        const spinner = document.getElementById('login-spinner-' + platform);
+        const message = document.getElementById('login-message-' + platform);
+        const btn = document.getElementById('btn-login-' + platform);
+        
+        const interval = setInterval(() => {
+            fetch('/platforms/login/' + platform + '/status')
+                .then(r => r.json())
+                .then(data => {
+                    message.textContent = data.message || data.status;
+                    
+                    if (!data.active) {
+                        clearInterval(interval);
+                        spinner.style.display = 'none';
+                        btn.disabled = false;
+                        
+                        if (data.status === 'success') {
+                            message.innerHTML = '<span class="text-success"><i class="bi bi-check-circle"></i> ' + data.message + '</span>';
+                            // Recharger la page apres 2s
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            message.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle"></i> ' + data.message + '</span>';
+                        }
+                    }
+                });
+        }, 3000);
+    }
+    
+    // Import cookies form
+    document.getElementById('cookieImportForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const resultDiv = document.getElementById('import-result');
+        
+        fetch('/platforms/import-cookies', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                resultDiv.style.display = 'block';
+                if (data.error) {
+                    resultDiv.innerHTML = '<div class="alert alert-danger small py-2">' + data.error + '</div>';
+                } else {
+                    resultDiv.innerHTML = '<div class="alert alert-success small py-2">' + data.message + '</div>';
+                    setTimeout(() => location.reload(), 2000);
+                }
+            })
+            .catch(err => {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = '<div class="alert alert-danger small py-2">Erreur: ' + err + '</div>';
+            });
+    });
+</script>
+{% endblock %}

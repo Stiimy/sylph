@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<!-- Stats cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Offres totales</div>
+                        <div class="stat-number">{{ stats.total_offers }}</div>
+                    </div>
+                    <i class="bi bi-briefcase stat-icon text-primary"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Candidatures</div>
+                        <div class="stat-number">{{ stats.total_applied }}</div>
+                    </div>
+                    <i class="bi bi-send stat-icon text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Reussies</div>
+                        <div class="stat-number text-success">{{ stats.success_count }}</div>
+                    </div>
+                    <i class="bi bi-check-circle stat-icon text-success"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card border-0">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Echouees</div>
+                        <div class="stat-number text-danger">{{ stats.failed_count }}</div>
+                    </div>
+                    <i class="bi bi-x-circle stat-icon text-danger"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Today stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6 class="card-title text-muted">Aujourd'hui</h6>
+                <div class="d-flex gap-4">
+                    <div>
+                        <span class="fs-3 fw-bold">{{ stats.today_offers }}</span>
+                        <span class="text-muted ms-1">offres trouvees</span>
+                    </div>
+                    <div>
+                        <span class="fs-3 fw-bold">{{ stats.today_applied }}</span>
+                        <span class="text-muted ms-1">candidatures</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6 class="card-title text-muted">Par plateforme</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for platform, count in stats.platform_counts.items() %}
+                    <span class="badge platform-badge platform-{{ platform }}">
+                        {{ platform }}: {{ count }}
+                    </span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart: 7 derniers jours -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6 class="card-title text-muted">7 derniers jours</h6>
+                <div class="chart-container">
+                    <canvas id="weekChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Par statut + Offres recentes -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6 class="card-title text-muted">Candidatures par statut</h6>
+                <ul class="list-group list-group-flush">
+                    {% for status, count in stats.status_counts.items() %}
+                    <li class="list-group-item d-flex justify-content-between bg-transparent">
+                        <span class="badge status-{{ status }}">{{ status }}</span>
+                        <span class="fw-bold">{{ count }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6 class="card-title text-muted">Dernieres offres trouvees</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Entreprise</th>
+                                <th>Plateforme</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for offer in stats.recent_offers %}
+                            <tr>
+                                <td>
+                                    <a href="{{ offer.url }}" target="_blank" class="text-decoration-none">
+                                        {{ offer.title[:50] }}{% if offer.title|length > 50 %}...{% endif %}
+                                    </a>
+                                </td>
+                                <td>{{ offer.company[:30] }}</td>
+                                <td><span class="badge platform-badge platform-{{ offer.platform }}">{{ offer.platform }}</span></td>
+                                <td class="text-muted small">{{ offer.found_date[:10] if offer.found_date else '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dernieres candidatures -->
+<div class="row g-3">
+    <div class="col-12">
+        <div class="card border-0">
+            <div class="card-body">
+                <h6 class="card-title text-muted">Dernieres candidatures</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Offre</th>
+                                <th>Entreprise</th>
+                                <th>Plateforme</th>
+                                <th>Statut</th>
+                                <th>Details</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for app in stats.recent_applied %}
+                            <tr>
+                                <td>
+                                    <a href="{{ app.url }}" target="_blank" class="text-decoration-none">
+                                        {{ app.offer_title[:40] }}{% if app.offer_title|length > 40 %}...{% endif %}
+                                    </a>
+                                </td>
+                                <td>{{ app.company[:25] }}</td>
+                                <td><span class="badge platform-badge platform-{{ app.platform }}">{{ app.platform }}</span></td>
+                                <td><span class="badge status-{{ app.status }}">{{ app.status }}</span></td>
+                                <td class="text-muted small">{{ app.details[:40] }}</td>
+                                <td class="text-muted small">{{ app.timestamp[:16] if app.timestamp else '-' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+    // Graphique des 7 derniers jours
+    const dailyOffers = {{ stats.daily_offers | tojson }};
+    const dailyApplied = {{ stats.daily_applied | tojson }};
+    
+    const labels = Object.keys(dailyOffers).map(d => {
+        const parts = d.split('-');
+        return parts[2] + '/' + parts[1];
+    });
+    
+    new Chart(document.getElementById('weekChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Offres trouvees',
+                    data: Object.values(dailyOffers),
+                    backgroundColor: 'rgba(99, 102, 241, 0.7)',
+                    borderRadius: 4,
+                },
+                {
+                    label: 'Candidatures',
+                    data: Object.values(dailyApplied),
+                    backgroundColor: 'rgba(34, 197, 94, 0.7)',
+                    borderRadius: 4,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { color: '#9ca3af' } }
+            },
+            scales: {
+                x: { ticks: { color: '#9ca3af' }, grid: { display: false } },
+                y: { ticks: { color: '#9ca3af' }, grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}

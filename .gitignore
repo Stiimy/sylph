@@ -1,0 +1,43 @@
+# Config avec données personnelles
+config.yaml
+
+# Logs et données
+logs/*.json
+logs/*.log
+logs/*.log.*
+logs/*.png
+
+# Cookies et sessions
+cookies.txt
+cookies_all.txt
+*.cookies.txt
+*.cookies*.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# Profil navigateur
+.sylph-profile/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Systeme
+.DS_Store
+*.bak
+
+# Notes personnelles
+MEMORY.md
+resume_*.md
+
+# Fichiers environment
+.env
+.env.*
