@@ -32,7 +32,7 @@ class AIAnalysis:
 
 COMBINED_ANALYSIS_SYSTEM = """Tu evalues des offres d'alternance pour un candidat IT. Reponds UNIQUEMENT en JSON.
 
-CANDIDAT: BTS CIEL option Cybersecurite. Cherche alternance Bac+3 en region parisienne (IDF).
+CANDIDAT: Formation en informatique / cybersecurite. Cherche alternance en region parisienne (IDF).
 Il peut occuper TOUS ces postes: technicien support, administrateur systeme, administrateur reseau, technicien helpdesk, technicien informatique, developpeur, devops, cybersecurite, SOC analyst, support IT, technicien systeme et reseau, administrateur infrastructure, support utilisateur, technicien bureautique.
 Il ne veut PAS de poste de technicien de proximite / technicien informatique de proximite.
 MEME si l'offre mentionne "ingenieur" ou "Bac+5", beaucoup d'alternances acceptent des Bac+3 en pratique.

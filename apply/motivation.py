@@ -80,8 +80,8 @@ def _generate_ai_letter(offer: dict, profile: dict, ai_client) -> Optional[str]:
 
 CANDIDAT:
 - Nom: {nom_complet}
-- Formation: BTS CIEL (Cybersecurite, Informatique, Electronique, Localisation)
-- Competences: pentest, OSINT, Docker, Azure, administration Linux, Python, securite informatique
+- Formation: {profile.get('summary', 'Formation en informatique').split(chr(10))[0]}
+- Competences: {profile.get('summary', 'informatique, systeme, reseau, securite')}
 - Recherche: alternance informatique a Paris
 
 OFFRE:
@@ -134,15 +134,15 @@ def _generate_template_letter(offer: dict, profile: dict) -> str:
         motivation_detail = (
             "Passionne par la securite des systemes d'information, "
             "je maitrise les outils de pentest, l'OSINT et l'administration "
-            "de systemes Linux. Mon BTS CIEL option Cybersecurite m'a permis "
+            "de systemes Linux. Ma formation en cybersecurite m'a permis "
             "de developper des competences solides en analyse de vulnerabilites "
             "et en protection des infrastructures."
         )
     elif any(w in title_lower for w in ['reseau', 'telecom', 'infra', 'systeme']):
         domaine = "les reseaux et systemes"
         motivation_detail = (
-            "Forme a l'administration systeme et reseau dans le cadre "
-            "de mon BTS CIEL, je maitrise Docker, Azure, et l'administration "
+            "Forme a l'administration systeme et reseau, "
+            "je maitrise Docker, Azure, et l'administration "
             "Linux. Je suis capable de deployer et maintenir des infrastructures "
             "fiables et securisees."
         )
@@ -150,14 +150,14 @@ def _generate_template_letter(offer: dict, profile: dict) -> str:
         domaine = "le support informatique"
         motivation_detail = (
             "Rigoureux et pedagogue, je suis forme au diagnostic "
-            "et a la resolution d'incidents informatiques. Mon BTS CIEL "
+            "et a la resolution d'incidents informatiques. Ma formation "
             "m'a donne des bases solides en systemes, reseaux et securite "
             "qui me permettent d'assurer un support efficace."
         )
     elif any(w in title_lower for w in ['dev', 'developpeur', 'programmeur', 'devops']):
         domaine = "le developpement informatique"
         motivation_detail = (
-            "Forme au developpement dans le cadre de mon BTS CIEL, "
+            "Forme au developpement, "
             "je maitrise Python et les outils DevOps (Docker, CI/CD). "
             "Je suis motive pour contribuer a des projets concrets "
             "et monter en competences rapidement."
@@ -165,17 +165,16 @@ def _generate_template_letter(offer: dict, profile: dict) -> str:
     else:
         domaine = "l'informatique"
         motivation_detail = (
-            "Actuellement en BTS CIEL (Cybersecurite, Informatique, Electronique), "
-            "je dispose de competences variees en administration systeme, "
-            "securite informatique, et deploiement d'infrastructures. "
-            "Je suis motive et pret a m'investir pleinement."
+            "Disposant de competences variees en administration systeme, "
+            "securite informatique, et deploiement d'infrastructures, "
+            "je suis motive et pret a m'investir pleinement."
         )
 
     entreprise_text = f"au sein de {company}" if company and company != "Non specifie" else ""
 
     letter = (
         f"Madame, Monsieur,\n\n"
-        f"Actuellement etudiant en BTS CIEL option Cybersecurite, "
+        f"Actuellement en formation informatique, "
         f"je suis a la recherche d'une alternance dans {domaine}. "
         f"Votre offre \"{title}\" {entreprise_text} correspond "
         f"parfaitement a mon projet professionnel.\n\n"
